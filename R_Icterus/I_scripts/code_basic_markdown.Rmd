@@ -21,3 +21,34 @@ Antes de localizar los trazos es importante realizar un análisis clúster, este
 ### ¿Existe un patrón general de distribución en mi conjunto de datos?
 
 Se consultaron 19 bases de datos para el género Icterus, 93 para Bursera y 97 para Sceloporus, para especies distribuidas en México. Inicialmente cada una cuenta con 226 variables, con registros desde el año 1887 hasta 2025. El número de observaciones varía desde 42 hasta 1 943 792.
+
+## Icterus auratus
+Previo al análisis clúster se debe cuidar la calidad de los datos, realicé una limpieza de errores y bases de datos origen, asi como NA, resultando en 4 639 registros filtrados.
+
+![](R_Icterus/I_salidas/icter_map_ini02.png)
+
+### Extracción de variables bioclimáticas
+
+Usando capas raster y vectoriales con información bioclimática y elevación se generó una base de datos con información de cada una de las variables para cada registro georeferenciado y se obtuvo una base con 26 variables.
+
+### Aclaramiento de coordenadas
+
+Se encontró un marcado sobremuestreo en los registros, por lo que se realizó un aclaramiento usando la función spthin.
+
+![](R_Icterus/I_salidas/I_02spthin.png)
+
+### Correlación de variables
+
+Para encontrar que variables pueden sezgar el resultado por estar fuertemente correlacionadas se ejecutó un análisis de correlación de variables usando corrplot.
+
+![](R_Icterus/I_salidas/corr.png)
+
+### Clúster Kmeans
+
+Una vez preparados los datos y eliminando las variables correlacionadas del análisis se realizó un anális cluster usando el método kmeans, para encontrar el número de clúster óptimio se utilizó fviz_nbclust, que encuentra varianza dentro de los clusters en función del número de clusters (k).
+
+![](R_Icterus/I_salidas/agrupamiento.png)
+
+Visualización de clústers
+
+![](R_Icterus/I_salidas/kmeans.png)

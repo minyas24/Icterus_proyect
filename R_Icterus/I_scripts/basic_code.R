@@ -134,7 +134,7 @@ df_cleaning <- df_gbif %>%
   write_csv("R_Icterus/I_data/I_10_cleaning.csv")
 
 #------exploración y limpieza por país, base de datos e institución-----
-####df_cleaning <- read_csv(here("R_Icterus/I_data/I_02_cleaning.csv"))      
+####df_cleaning <- read_csv(here("R_Icterus/I_data/I_10_cleaning.csv"))      
 
 
 unique(df_cleaning$countryCode)
