@@ -1,43 +1,21 @@
 ********************************************** 
  Beginning Spatial Thinning.
- Script Started at: Sun Oct 26 16:43:26 2025
-********************************************** 
- Beginning Spatial Thinning.
- Script Started at: Sun Oct 26 16:43:43 2025
+ Script Started at: Tue Oct 28 22:56:49 2025
 
 Thinning Parameter Used (in km): 10
 Number of replicates of thinning script: 100
 
 Elapsed time for thinning completion
-52.78 13.56 66.9 NA NA
+65.11 16.08 82.53 NA NA
 
 Number of data.frames per locations retained
 loc.cnt df.freq
-358	359	360	361	362	363	364
-3	23	26	27	12	8	1
-Maximum number of records after thinning: 364
-Number of data.frames with max records: 1
+372	373	374	375	376	377	378
+3	13	34	25	14	9	2
+Maximum number of records after thinning: 378
+Number of data.frames with max records: 2
 
 **New *.csv file creation:**
-Created new output directory: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/output_I2_thin
-Writing file: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/output_I2_thin/thinned_data_thin1.csv
-********************************************** 
- Beginning Spatial Thinning.
- Script Started at: Mon Oct 27 09:50:41 2025
-
-Thinning Parameter Used (in km): 10
-Number of replicates of thinning script: 100
-
-Elapsed time for thinning completion
-53.64 12.81 66.45 NA NA
-
-Number of data.frames per locations retained
-loc.cnt df.freq
-361	362	363	364	365	366	367
-2	15	21	31	24	6	1
-Maximum number of records after thinning: 367
-Number of data.frames with max records: 1
-
-**New *.csv file creation:**
-Created new output directory: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/output_I2_thin
-Writing file: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/output_I2_thin/thinned_data_thin1.csv
+Writing new *.csv files to output directory: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data
+Writing file: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/I_10_thin_thin1.csv
+Writing file: C:/Users/Yas/Desktop/Icterus_proyect/R_Icterus/I_data/I_10_thin_thin2.csv
