@@ -215,7 +215,7 @@ df_cleaning <- df_gbif %>%
                               "zeros"),
                     value = "clean",
                     verbose = TRUE)%>% #informe de proceso
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 ```
 
 exploración
@@ -250,7 +250,7 @@ df_clean <- df_cleaning %>%
   filter(!is.na(institutionCode)) %>%
   distinct(decimalLatitude, decimalLongitude, .keep_all = TRUE) %>% #elimina puntos duplicados, keep conserva todas las columnas
   select(gbifID, species, decimalLatitude, decimalLongitude, month, year) %>% #selecciona en el orden dado 
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 df_clean
 
 ```
@@ -282,7 +282,7 @@ shp_clean
 capa altura
 
 ```{r}
-alt <- worldclim_global(var="elev", res=0.5, path=tempdir())
+alt <- worldclim_global(var="elev", res=10, path=tempdir())
 ```
 
 carga archivos vectoriales de la nube
@@ -370,7 +370,7 @@ map_dist <- map_ini_close / ( cow_final | map_ini )  +
     caption = "Fuente: GBIF")
 map_dist
 
-ggsave("R_icterus/I_salidas/map_dist.png",
+ggsave("R_icterus/I_salidas/map_dist102.png",
        plot = map_dist,
        dpi = 300,
        width = 15,
@@ -390,14 +390,14 @@ alt)
 Datos ambientales (variables bioclimáticas)
 
 ```{r}
-#env <- worldclim_global(var = "bio", res = 0.5, path = "datos_wc")
+env <- worldclim_global(var = "bio", res = 10, path = "datos_wc")
 ```
 
 guardar y asignar rds
 
 ```{r}
-#saveRDS(env, "datos_wc/climate/wc2.1_30s/bio_enviromental.rds")
-env <- readRDS("datos_wc/climate/wc2.1_30s/bio_enviromental.rds")
+saveRDS(env, "datos_wc/climate/wc2.1_30s/bio_enviromental2.rds")
+env <- readRDS("datos_wc/climate/wc2.1_30s/bio_enviromental2.rds")
 ```
 
 renombrar las variables para mayor claridad
@@ -434,7 +434,7 @@ elevaciones <- terra::extract(alt, puntos_sf)
 columna elev al shp puntos_sf
 
 ```{r}
-puntos_sf$elev <- elevaciones$wc2.1_30s_elev
+puntos_sf$elev <- elevaciones$wc2.1_10m_elev
 
 ```
 
@@ -454,8 +454,8 @@ combina objetos data.frames por columnas horizontalmente
 df_icter <- cbind.data.frame(puntos_sf, env_icter)%>%
   filter(!is.na(elev))%>% #quita NA
   select(-ID)%>%
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
-
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
+df_icter
 
 ```
 
@@ -466,7 +466,8 @@ df_icter <- cbind.data.frame(puntos_sf, env_icter)%>%
 \*\*
 
 ```{r}
-df_icter <- read.csv("R_Icterus/I_data/I_10_clean.csv")
+df_icter <- read.csv("R_Icterus/I_data/I_10_clean2.csv")
+df_icter
 ```
 
 visualización de ocurrencias
@@ -490,16 +491,17 @@ thin( loc.data = df_icter,
       spec.col = "species", 
       thin.par = 10, reps = 100, 
       locs.thinned.list.return = FALSE, 
-      write.files = TRUE, 
+      write.files = TRUE,
       write.log.file = FALSE,
       out.dir = here("R_Icterus", "I_data"),
-      out.base = "I_10")
+      out.base = "I_10_2")
+
 ```
 
 visualizar y guardar puntos adelgazados
 
 ```{r}
-map_thin <- read_csv("R_Icterus/I_data/I_10_thin1.csv") %>%
+map_thin <- read_csv("R_Icterus/I_data/I_10_2_thin1.csv") %>%
   ggplot(aes(decimalLongitude, decimalLatitude)) +
   geom_point(color = "red") +
   labs(x = "Longitud",
@@ -516,7 +518,7 @@ map_spthin <- wrap_plots(ocurrencias, map_thin, nrow = 1) +  # ← wrap_plots ex
 
 map_spthin
 
-ggsave("R_icterus/I_salidas/mapthin_10.png",
+ggsave("R_icterus/I_salidas/mapthin_10_2.png",
        plot = map_spthin,
        dpi = 300,
        width = 17,
@@ -530,7 +532,7 @@ asignación de ids y adelgazamiento
 
 ```{r}
 inicial <- df_icter
-thin1 <-  read_csv("R_Icterus/I_data/I_10_thin1.csv")
+thin1 <-  read_csv("R_Icterus/I_data/I_10_2_thin1.csv")
 
 ```
 
@@ -542,7 +544,7 @@ icter_spthin <- thin1 %>%
             by = c("species" = "species",
                    "decimalLongitude" = "decimalLongitude",
                    "decimalLatitude" = "decimalLatitude" ))%>%
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 
 which(is.na(icter_spthin$gbifID))  #Verificar NAs para buscar errores de no coincidencia
 ```
@@ -556,6 +558,7 @@ datos_inicial <- nrow(inicial)
 datos_fin <-nrow(thin1)
 datos_elim <- datos_inicial - datos_fin 
 print(paste0("Thin/ Numero inicial: ", datos_inicial, ", eliminados: ", datos_elim, ", Numero final: ", datos_fin))
+datos_inicial
 ```
 
 (icter_spthin)
@@ -583,7 +586,7 @@ corr <- ggcorrplot(matriz_cor, #matriz de correlacion
   labs(title = "Matriz de correlacion para Icterus dominicensis")
 corr
 
-ggsave("R_Icterus/I_salidas/corr.png", 
+ggsave("R_Icterus/I_salidas/I_10_corr2.png", 
        plot = corr,
        dpi = 300,
        width = 12,   
@@ -599,7 +602,7 @@ var_elim
 
 icter_corr <- icter_spthin %>%
  select(-all_of(var_elim))%>%
-  write_csv("R_Icterus/I_data/I_10_corr.csv")
+  write_csv("R_Icterus/I_data/I_10_corr2.csv")
 ```
 
 (icter_corr)
@@ -614,20 +617,20 @@ df_kmeans <- icter_corr %>%
   select(where(is.numeric)) %>%
   scale() %>%
   as.data.frame()
-
+df_kmeans
 ```
 
 A medida que aumenta el valor de k, la varianza dentro de los clusters tiende a disminuir. La curva o “codo” indica que más allá agregar más clusters tiene poco valor adicional en términos de reducir la varianza dentro de los clusters.
 
 ```{r}
 agrupamiento <- fviz_nbclust(df_kmeans, kmeans, method = "wss") +
-  geom_vline(xintercept = 5, linetype = 2)+
+  geom_vline(xintercept = 4, linetype = 2)+
   labs(title = "Clusters optimos para I. dominicensis",
        x = "Numero de clusters k",
        y = "Varianza dentro de los clusters")
 agrupamiento
 
-ggsave("R_Icterus/I_salidas/I_10_grup.png", 
+ggsave("R_Icterus/I_salidas/I_10_grup2.png", 
        plot = agrupamiento,
        dpi = 300,
        width = 12,   
@@ -639,7 +642,7 @@ búsqueda de clústers (kmeans)
 
 ```{r}
 set.seed(123)
-icter_kmeans <- kmeans(df_kmeans, 5, nstart = 25)
+icter_kmeans <- kmeans(df_kmeans, 4, nstart = 25)
 table(icter_kmeans$cluster)
 ```
 
@@ -653,7 +656,7 @@ kmeans_grf <- fviz_cluster(icter_kmeans, data = df_kmeans,
     subtitle = "Icterus dominicensis")
 kmeans_grf
 
-ggsave("R_Icterus/I_salidas/I_10_kmeans.png", 
+ggsave("R_Icterus/I_salidas/I_10_kmeans2.png", 
        plot = kmeans_grf,
        dpi = 300,
        width = 12,   
@@ -668,7 +671,7 @@ tomando los datos iniciales(icter_corr) crea una columna cluster (posterior kmea
 icter_clusters <- icter_corr %>%
   mutate(cluster = icter_kmeans$cluster)%>%
   filter(cluster != 1 ) %>%
-  write_csv("R_Icterus/I_data/I_10_kmeans.csv")
+  write_csv("R_Icterus/I_data/I_10_kmeans2.csv")
 
 ```
 

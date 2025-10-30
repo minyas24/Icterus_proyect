@@ -109,10 +109,10 @@ df_cleaning <- df_gbif %>%
                               "zeros"),
                     value = "clean",
                     verbose = TRUE)%>% #informe de proceso
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 
 #------exploración y limpieza por base de datos e institución-----
-####df_cleaning <- read_csv(here("R_Icterus/I_data/I_10_clean.csv"))      
+####df_cleaning <- read_csv(here("R_Icterus/I_data/I_10_clean2.csv"))      
 
 unique(df_cleaning$countryCode)
 unique(df_cleaning$basisOfRecord)
@@ -138,7 +138,7 @@ df_clean <- df_cleaning %>%
   filter(!is.na(institutionCode)) %>%
   distinct(decimalLatitude, decimalLongitude, .keep_all = TRUE) %>% #elimina puntos duplicados, keep conserva todas las columnas
   select(gbifID, species, decimalLatitude, decimalLongitude, month, year) %>% #selecciona en el orden dado 
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 
 #df_clean
 #----------Mapa inicial------------
@@ -228,7 +228,7 @@ map_dist <- map_ini_close / ( cow_final | map_ini )  +
     caption = "Fuente: GBIF")
 map_dist
 
-ggsave("R_icterus/I_salidas/icter_map_ini02.png", 
+ggsave("R_icterus/I_salidas/map_dist102.png", 
        plot = mapini_02,
        dpi = 300,
        width = 12,   
@@ -239,11 +239,11 @@ ggsave("R_icterus/I_salidas/icter_map_ini02.png",
 #----------Extracción de variables bioclimáticas------------
 
 #descargar datos ambientales de worldclim (variables bioclimáticas)
-#env <- worldclim_global(var = "bio", res = 0.5, path = "datos_wc")
+env <- worldclim_global(var = "bio", res = 10, path = "datos_wc")
 
 #guardar rds para futuras cargas automáticas
-#saveRDS(env, "datos_wc/climate/wc2.1_30s/bio_enviromental.rds")
-#env <- readRDS("datos_wc/climate/wc2.1_30s/bio_enviromental.rds")
+saveRDS(env, "datos_wc/climate/wc2.1_30s/bio_enviromental2.rds")
+env <- readRDS("datos_wc/climate/wc2.1_30s/bio_enviromental2.rds")
 
 #renombrar las variables para mayor claridad
 #vector vacio para loop
@@ -269,7 +269,7 @@ elevaciones <- terra::extract(alt, puntos_sf)
 elevaciones
 
 #agrega la columna elev al shp puntos_sf
-puntos_sf$elev <- elevaciones$wc2.1_30s_elev
+puntos_sf$elev <- elevaciones$wc2.1_10m_elev
 print(puntos_sf)
 
 
@@ -284,14 +284,14 @@ print(env_icter)
 df_icter <- cbind.data.frame(puntos_sf, env_icter)%>%
   filter(!is.na(elev))%>% #quita NA
   select(-ID)%>%
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 
 print(df_icter)
 
 #df_icter
 #-------------SpThin-------------------------------------
 ##*************
-df_icter <- read.csv("R_Icterus/I_data/I_10_clean.csv")
+df_icter <- read.csv("R_Icterus/I_data/I_10_clean2.csv")
 
 
 #visualización de ocurrencias
@@ -313,7 +313,7 @@ thin( loc.data = df_icter,
       write.files = TRUE, 
       write.log.file = FALSE,
       out.dir = "R_Icterus/I_data",
-      out.base = "I_10")
+      out.base = "I_10_2")
 
 #visualizar y guardar puntos adelgazados
 map_thin <- read_csv("R_Icterus/I_data/I_10_thin1.csv") %>%
@@ -330,7 +330,7 @@ map_spthin <- ocurrencias + map_thin +
 
 map_spthin
 
-ggsave("R_icterus/I_salidas/mapthin_10.png",
+ggsave("R_icterus/I_salidas/mapthin_10_2.png",
        plot = map_spthin,
        dpi = 300,
        width = 15,
@@ -345,7 +345,7 @@ ggsave("R_icterus/I_salidas/mapthin_10.png",
 #lectura de registros iniciales con id
 inicial <- df_icter
 #lectura de resultados de adelgazamiento
-thin1 <-  read_csv("R_Icterus/I_data/I_10_thin1.csv")
+thin1 <-  read_csv("R_Icterus/I_data/I_10_2thin1.csv")
 
 # join usando las coordenadas y la especie como clave, "thin1" = "inicial"
 icter_spthin <- thin1 %>% 
@@ -353,7 +353,7 @@ icter_spthin <- thin1 %>%
             by = c("species" = "species",
                    "decimalLongitude" = "decimalLongitude",
                    "decimalLatitude" = "decimalLatitude" ))%>%
-  write_csv("R_Icterus/I_data/I_10_clean.csv")
+  write_csv("R_Icterus/I_data/I_10_clean2.csv")
 
 which(is.na(icter_spthin$gbifID))  #Verificar NAs para buscar errores de no coincidencia
   
@@ -364,7 +364,7 @@ which(is.na(icter_spthin$gbifID))  #Verificar NAs para buscar errores de no coin
 
 datos_inicial <- nrow(inicial)
 
-datos_fin <-nrow(thinned_data_thin1)
+datos_fin <-nrow(thin1)
 
 datos_elim <- datos_inicial - datos_fin 
 
@@ -388,7 +388,7 @@ corr <- ggcorrplot(matriz_cor, #matriz de correlacion
   labs(title = "Matriz de correlacion para Icterus dominicensis")
 corr
 
-ggsave("R_Icterus/I_salidas/corr_10.png", 
+ggsave("R_Icterus/I_salidas/I_10_corr2.png", 
        plot = corr,
        dpi = 300,
        width = 12,   
@@ -408,7 +408,7 @@ var_elim
 
 icter_corr <- icter_spthin %>%
   select(-var_elim)%>%
-  write_csv("R_Icterus/I_data/I_10_corr.csv")
+  write_csv("R_Icterus/I_data/I_10_corr2.csv")
 
 #icter_corr
 #----------Generación de kmeans------------
@@ -431,7 +431,7 @@ agrupamiento <- fviz_nbclust(df_kmeans, kmeans, method = "wss") +
 
 agrupamiento
 
-ggsave("R_Icterus/I_salidas/I_10_grup.png", 
+ggsave("R_Icterus/I_salidas/I_10_grup2.png", 
        plot = agrupamiento,
        dpi = 300,
        width = 12,   
@@ -453,7 +453,7 @@ kmeans_grf <- fviz_cluster(icter_kmeans, data = df_kmeans,
        subtitle = "Icterus dominicensis")
 kmeans_grf
 
-ggsave("R_Icterus/I_salidas/I_10_kmeans.png", 
+ggsave("R_Icterus/I_salidas/I_10_kmeans2.png", 
        plot = kmeans_grf,
        dpi = 300,
        width = 12,   
@@ -464,7 +464,7 @@ ggsave("R_Icterus/I_salidas/I_10_kmeans.png",
 icter_clusters <- icter_corr %>%
   mutate(cluster = icter_kmeans$cluster)%>%
   filter(cluster != 1 ) %>%
-  write_csv("R_Icterus/I_data/I_10_kmeans.csv")
+  write_csv("R_Icterus/I_data/I_10_kmeans2.csv")
 icter_clusters
 
 
